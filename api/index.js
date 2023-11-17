@@ -14,17 +14,18 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 const jwt = require("jsonwebtoken");
 
-mongoose
-  .connect("mongodb+srv://sujananand:sujan@cluster0.qvtqiux.mongodb.net/", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Connected to Mongo Db");
-  })
-  .catch((err) => {
-    console.log("Error connecting to MongoDb", err);
-  });
+const url =
+  "mongodb+srv://abiye:abiye@cluster0.ottcbtz.mongodb.net/Messanger_DB"
+const connectDB = async () => {
+  try {
+    await mongoose.connect(url).then(() => {
+      console.log("MongoDB connected successfully.");
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+connectDB();
 
 app.listen(port, () => {
   console.log("Server running on port 8000");
@@ -61,7 +62,7 @@ const createToken = (userId) => {
   };
 
   // Generate the token with a secret key and expiration time
-  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "1h" });
+  const token = jwt.sign(payload, "Q$r2K6W8n!jCW%Zk", { expiresIn: "20m" });
 
   return token;
 };

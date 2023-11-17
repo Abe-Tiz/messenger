@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState ,useEffect} from "react";
@@ -32,26 +33,38 @@ const LoginScreen = () => {
 
     checkLoginStatus();
   }, []);
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
     const user = {
       email: email,
       password: password,
     };
 
-    axios
-      .post("http://localhost:8000/login", user)
-      .then((response) => {
-        console.log(response);
-        const token = response.data.token;
+    try {
+      const response = await fetch("http://10.0.2.2:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData);
+        const token = responseData.token;
         AsyncStorage.setItem("authToken", token);
 
         navigation.replace("Home");
-      })
-      .catch((error) => {
+      } else {
         Alert.alert("Login Error", "Invalid email or password");
-        console.log("Login Error", error);
-      });
+        console.log("Login Error", response.statusText);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
+
   return (
     <View
       style={{
@@ -120,7 +133,7 @@ const LoginScreen = () => {
             />
           </View>
 
-          <Pressable
+          <TouchableOpacity
             onPress={handleLogin}
             style={{
               width: 200,
@@ -142,16 +155,16 @@ const LoginScreen = () => {
             >
               Login
             </Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          <Pressable
+          <TouchableOpacity
             onPress={() => navigation.navigate("Register")}
             style={{ marginTop: 15 }}
           >
             <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
               Dont't have an account? Sign Up
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </View>

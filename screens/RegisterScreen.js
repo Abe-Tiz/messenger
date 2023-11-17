@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Pressable,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +18,9 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
   const navigation = useNavigation();
-  const handleRegister = () => {
+
+
+  const handleRegister = async () => {
     const user = {
       name: name,
       email: email,
@@ -25,28 +28,35 @@ const RegisterScreen = () => {
       image: image,
     };
 
-    // send a POST  request to the backend API to register the user
-    axios
-      .post("http://localhost:8000/register", user)
-      .then((response) => {
-        console.log(response);
+    try {
+      const response = await fetch("http://10.0.2.2:8000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData);
         Alert.alert(
           "Registration successful",
-          "You have been registered Successfully"
+          "You have been registered successfully"
         );
         setName("");
         setEmail("");
         setPassword("");
         setImage("");
-      })
-      .catch((error) => {
-        Alert.alert(
-          "Registration Error",
-          "An error occurred while registering"
-        );
-        console.log("registration failed", error);
-      });
+      } else {
+        Alert.alert("Registration Error", "An error occurred while registering");
+        console.log("Registration failed", response.statusText);
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
+
   return (
     <View
       style={{
@@ -155,7 +165,7 @@ const RegisterScreen = () => {
             />
           </View>
 
-          <Pressable
+          <TouchableOpacity
             onPress={handleRegister}
             style={{
               width: 200,
@@ -177,16 +187,16 @@ const RegisterScreen = () => {
             >
               Register
             </Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          <Pressable
+          <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={{ marginTop: 15 }}
           >
             <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
               Already Have an account? Sign in
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </View>

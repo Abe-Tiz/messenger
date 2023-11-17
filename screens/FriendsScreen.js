@@ -13,23 +13,35 @@ const FriendsScreen = () => {
 
   const fetchFriendRequests = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8000/friend-request/${userId}`
+      const response = await fetch(
+        `http://10.0.2.2:8000/friend-request/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      if (response.status === 200) {
-        const friendRequestsData = response.data.map((friendRequest) => ({
-          _id: friendRequest._id,
-          name: friendRequest.name,
-          email: friendRequest.email,
-          image: friendRequest.image,
-        }));
+
+      if (response.ok) {
+        const friendRequestsData = (await response.json()).map(
+          (friendRequest) => ({
+            _id: friendRequest._id,
+            name: friendRequest.name,
+            email: friendRequest.email,
+            image: friendRequest.image,
+          })
+        );
 
         setFriendRequests(friendRequestsData);
+      } else {
+        console.log("Error fetching friend requests:", response.statusText);
       }
     } catch (err) {
-      console.log("error message", err);
+      console.log("Error:", err);
     }
   };
+
 
   console.log(friendRequests);
   return (

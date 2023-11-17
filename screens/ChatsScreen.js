@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View ,ScrollView, Pressable} from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import React, { useContext,useEffect,useState } from "react";
 import { UserType } from "../UserContext";
 import { useNavigation } from "@react-navigation/native";
@@ -13,7 +19,7 @@ const ChatsScreen = () => {
     const acceptedFriendsList = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/accepted-friends/${userId}`
+          `http://10.0.2.2:8000/accepted-friends/${userId}`
         );
         const data = await response.json();
 
@@ -30,11 +36,11 @@ const ChatsScreen = () => {
   console.log("friends",acceptedFriends)
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Pressable>
+      <TouchableOpacity>
           {acceptedFriends.map((item,index) => (
               <UserChat key={index} item={item}/>
           ))}
-      </Pressable>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

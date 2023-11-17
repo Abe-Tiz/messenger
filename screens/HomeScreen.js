@@ -34,23 +34,33 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      const decodedToken = jwt_decode(token);
-      const userId = decodedToken.userId;
-      setUserId(userId);
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        const decodedToken = jwt_decode(token);
+        const userId = decodedToken.userId;
+        setUserId(userId);
 
-      axios
-        .get(`http://localhost:8000/users/${userId}`)
-        .then((response) => {
-          setUsers(response.data);
-        })
-        .catch((error) => {
-          console.log("error retrieving users", error);
+        const response = await fetch(`http://10.0.2.2:8000/users/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          setUsers(responseData);
+        } else {
+          console.log("Error retrieving users:", response.statusText);
+        }
+      } catch (error) {
+        console.log("Error:", error);
+      }
     };
 
     fetchUsers();
   }, []);
+
 
   console.log("users", users);
   return (

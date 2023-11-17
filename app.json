@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "messenger-project",
-    "slug": "messenger-project",
+    "name": "Chat App",
+    "slug": "chat-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
